@@ -1,45 +1,47 @@
-$(document).ready(function() {
+$(document).ready(function()
+{
 
     $("#alertSuccess").hide();
     $("#alertError").hide();
-
 });
 
-// Save
-$(document).on("click", "#btnSave", function(event) {
-
-    // Clear alerts
+// SAVE ============================================
+$(document).on("click", "#btnSave", function(event)
+{
+// Clear alerts---------------------
     $("#alertSuccess").text("");
     $("#alertSuccess").hide();
     $("#alertError").text("");
     $("#alertError").hide();
 
-    // Form validation
-    var status = validateItemForm();
-    if (status != true) {
+// Form validation-------------------
+    var status = validateDoctorForm();
+    if (status != true)
+    {
         $("#alertError").text(status);
         $("#alertError").show();
         return;
     }
 
-    // If valid
-    var type = ($("#hidItemIDSave").val() == "") ? "POST" : "PUT";
+// If valid------------------------
+
+    var type = ($("#hidDoctorIDSave").val() == "") ? "POST" : "PUT";
 
     $.ajax(
         {
-            url : "ItemsAPI",
+            url : "DoctorAPI",
             type : type,
-            data : $("#formItem").serialize(),
+            data : $("#formDoctor").serialize(),
             dataType : "text",
             complete : function(response, status)
             {
-                onItemSaveComplete(response.responseText, status);
+                onDoctorSaveComplete(response.responseText, status);
             }
         });
-
 });
 
-function onItemSaveComplete(response, status) {
+
+function onDoctorSaveComplete(response, status) {
 
     if (status == "success") {
 
@@ -49,7 +51,8 @@ function onItemSaveComplete(response, status) {
 
             $("#alertSuccess").text("Successfully saved.");
             $("#alertSuccess").show();
-            $("#divItemsGrid").html(resultSet.data);
+
+            $("#divDoctorsGrid").html(resultSet.data);
 
         } else if (resultSet.status.trim() == "error") {
 
@@ -69,38 +72,38 @@ function onItemSaveComplete(response, status) {
 
     }
 
-    $("#hidItemIDSave").val("");
-    $("#formItem")[0].reset();
+    $("#hidDoctorIDSave").val("");
+    $("#formDoctor")[0].reset();
 
 }
 
-// Update
+//UPDATE==========================================
 $(document).on("click", ".btnUpdate", function(event)
 {
-    $("#hidItemIDSave").val($(this).closest("tr").find('#hidItemIDUpdate').val());
-    $("#itemCode").val($(this).closest("tr").find('td:eq(0)').text());
-    $("#itemName").val($(this).closest("tr").find('td:eq(1)').text());
-    $("#itemPrice").val($(this).closest("tr").find('td:eq(2)').text());
-    $("#itemDesc").val($(this).closest("tr").find('td:eq(3)').text());
+    $("#hidDoctorIDSave").val($(this).closest("tr").find('#hidDoctorIDUpdate').val());
+    $("#doctorName").val($(this).closest("tr").find('td:eq(0)').text());
+    $("#specialization").val($(this).closest("tr").find('td:eq(1)').text());
+    $("#doctorUsername").val($(this).closest("tr").find('td:eq(2)').text());
+    $("#doctorPassword").val($(this).closest("tr").find('td:eq(3)').text());
 });
 
-//Remove
+//Delete
 $(document).on("click", ".btnRemove", function(event)
 {
     $.ajax(
         {
-            url : "ItemsAPI",
+            url : "DoctorAPI",
             type : "DELETE",
-            data : "itemID=" + $(this).data("itemid"),
+            data : "doctorID=" + $(this).data("doctorid"),
             dataType : "text",
             complete : function(response, status)
             {
-                onItemDeleteComplete(response.responseText, status);
+                onDoctorDeleteComplete(response.responseText, status);
             }
         });
 });
 
-function onItemDeleteComplete(response, status) {
+function onDoctorDeleteComplete(response, status) {
 
     if (status == "success") {
 
@@ -110,7 +113,8 @@ function onItemDeleteComplete(response, status) {
 
             $("#alertSuccess").text("Successfully deleted.");
             $("#alertSuccess").show();
-            $("#divItemsGrid").html(resultSet.data);
+
+            $("#divDoctorsGrid").html(resultSet.data);
 
         } else if (resultSet.status.trim() == "error") {
 
@@ -133,37 +137,34 @@ function onItemDeleteComplete(response, status) {
 
 }
 
-// Client Model
-function validateItemForm() {
 
-    // CODE
-    if ($("#itemCode").val().trim() == "")
-    {
-        return "Insert Item Code.";
-    }
+
+// CLIENTMODEL=========================================================================
+function validateDoctorForm()
+{
+
     // NAME
-    if ($("#itemName").val().trim() == "")
+    if ($("#doctorName").val().trim() == "")
     {
-        return "Insert Item Name.";
+        return "Insert doctor Name.";
     }
 
-    // PRICE-------------------------------
-    if ($("#itemPrice").val().trim() == "")
+    // specialization-------------------------------
+    if ($("#specialization").val().trim() == "")
     {
-        return "Insert Item Price.";
+        return "Insert specialization.";
     }
-    // is numerical value
-    var tmpPrice = $("#itemPrice").val().trim();
-    if (!$.isNumeric(tmpPrice))
+    // doctorUsername-------------------------------
+    if ($("#doctorUsername").val().trim() == "")
     {
-        return "Insert a numerical value for Item Price.";
+        return "Insert doctorUsername.";
     }
-    // convert to decimal price
-    $("#itemPrice").val(parseFloat(tmpPrice).toFixed(2));
-    // DESCRIPTION------------------------
-    if ($("#itemDesc").val().trim() == "")
+    // doctorPassword-------------------------------
+    if ($("#doctorPassword").val().trim() == "")
     {
-        return "Insert Item Description.";
+        return "Insert doctorPassword.";
     }
+
+
     return true;
 }
